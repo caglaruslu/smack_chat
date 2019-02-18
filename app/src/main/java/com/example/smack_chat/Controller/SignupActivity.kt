@@ -1,12 +1,16 @@
 package com.example.smack_chat.Controller
 
 import android.content.Context
+import android.content.Intent
 import android.graphics.Color
 import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
+import android.support.v4.content.LocalBroadcastManager
 import android.view.View
+import android.widget.Toast
 import com.example.smack_chat.R
 import com.example.smack_chat.Services.AuthService
+import com.example.smack_chat.Utilities.BROADCAST_USER_DATA_CHANGE
 import kotlinx.android.synthetic.main.activity_signup.*
 import java.util.*
 
@@ -18,6 +22,8 @@ class SignupActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_signup)
+
+        enableSpinner(false)
     }
 
     fun generateUserAvatar(view: View){
@@ -61,18 +67,56 @@ class SignupActivity : AppCompatActivity() {
         val email = createEmailText.text.toString()
         val password = createPasswordText.text.toString()
 
-        AuthService.registerUser(this, email, password) {registerSuccess ->
-            if (registerSuccess){
-                AuthService.loginUser(this, email, password){loginSuccess ->
-                    if (loginSuccess){
-                        AuthService.createUser(this, userName, email, userAvatar, avatarColor){createUserSuccess ->
-                            if (createUserSuccess){
-                                finish()
+        if (userName.isNotEmpty() && email.isNotEmpty() && password.isNotEmpty()){
+
+            enableSpinner(true)
+
+            AuthService.registerUser(this, email, password) {registerSuccess ->
+                if (registerSuccess){
+                    AuthService.loginUser(this, email, password){loginSuccess ->
+                        if (loginSuccess){
+                            AuthService.createUser(this, userName, email, userAvatar, avatarColor){createUserSuccess ->
+
+                                if (createUserSuccess){
+
+                                    val userDataChange = Intent(BROADCAST_USER_DATA_CHANGE)
+                                    LocalBroadcastManager.getInstance(this).sendBroadcast(userDataChange)
+
+                                    enableSpinner(false)
+                                    finish()
+                                }else{
+                                    errorToast()
+                                }
                             }
+                        }else{
+                            errorToast()
                         }
                     }
+                }else{
+                    errorToast()
                 }
             }
+
+        }else{
+            Toast.makeText(this, "Please fill all text fields", Toast.LENGTH_LONG).show()
         }
+
+
+    }
+
+    fun enableSpinner(enable: Boolean){
+        if (enable){
+            createSpinner.visibility = View.VISIBLE
+        }else{
+            createSpinner.visibility = View.INVISIBLE
+        }
+        createUserButton.isEnabled = !enable
+        createAvatarImageView.isEnabled = !enable
+        generateBackgroundColorButton.isEnabled = !enable
+    }
+
+    fun errorToast(){
+        Toast.makeText(this, "Something went wrong. Please try again.", Toast.LENGTH_LONG).show()
+        enableSpinner(false)
     }
 }
