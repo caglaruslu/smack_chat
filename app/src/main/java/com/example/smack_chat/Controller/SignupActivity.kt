@@ -56,13 +56,20 @@ class SignupActivity : AppCompatActivity() {
     }
 
     fun createUserButtonClicked(view: View){
+
+        val userName = createUserNameText.text.toString()
         val email = createEmailText.text.toString()
         val password = createPasswordText.text.toString()
+
         AuthService.registerUser(this, email, password) {registerSuccess ->
             if (registerSuccess){
                 AuthService.loginUser(this, email, password){loginSuccess ->
                     if (loginSuccess){
-
+                        AuthService.createUser(this, userName, email, userAvatar, avatarColor){createUserSuccess ->
+                            if (createUserSuccess){
+                                finish()
+                            }
+                        }
                     }
                 }
             }
