@@ -1,10 +1,12 @@
 package com.example.smack_chat.Controller
 
+import android.content.Context
 import android.graphics.Color
 import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
 import android.view.View
 import com.example.smack_chat.R
+import com.example.smack_chat.Services.AuthService
 import kotlinx.android.synthetic.main.activity_signup.*
 import java.util.*
 
@@ -54,6 +56,16 @@ class SignupActivity : AppCompatActivity() {
     }
 
     fun createUserButtonClicked(view: View){
+        val email = createEmailText.text.toString()
+        val password = createPasswordText.text.toString()
+        AuthService.registerUser(this, email, password) {registerSuccess ->
+            if (registerSuccess){
+                AuthService.loginUser(this, email, password){loginSuccess ->
+                    if (loginSuccess){
 
+                    }
+                }
+            }
+        }
     }
 }
