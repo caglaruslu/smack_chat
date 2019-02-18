@@ -8,6 +8,8 @@
             android:label="Smack"
             android:supportsRtl="true"
             android:theme="@style/AppTheme">
+        <activity android:name=".SignupActivity">
+        </activity>
         <activity android:name=".LoginActivity">
         </activity>
         <activity

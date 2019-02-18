@@ -1,5 +1,6 @@
 package com.example.smack_chat
 
+import android.content.Intent
 import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
 import android.view.View
@@ -16,6 +17,7 @@ class LoginActivity : AppCompatActivity() {
     }
 
     fun loginSignupButtonClicked(view: View){
-
+        val signupIntent = Intent(this, SignupActivity::class.java)
+        startActivity(signupIntent)
     }
 }
